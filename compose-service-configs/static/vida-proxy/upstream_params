@@ -1,0 +1,3 @@
+keepalive 3;
+keepalive_timeout  650s;
+keepalive_requests 10000;

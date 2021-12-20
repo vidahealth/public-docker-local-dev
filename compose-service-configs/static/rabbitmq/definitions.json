@@ -1,0 +1,74 @@
+{
+    "permissions": [
+        {
+            "configure": ".*",
+            "read": ".*",
+            "user": "service1user",
+            "vhost": "service1vhost",
+            "write": ".*"
+        },
+        {
+            "configure": ".*",
+            "read": ".*",
+            "user": "service2user",
+            "vhost": "service2vhost",
+            "write": ".*"
+        },
+        {
+            "configure": ".*",
+            "read": ".*",
+            "user": "defaultrabbituser",
+            "vhost": "/",
+            "write": ".*"
+        }
+    ],
+    "users": [
+        {
+            "hashing_algorithm": "rabbit_password_hashing_sha256",
+            "limits": {},
+            "name": "service2user",
+            "password_hash": "EX8wBdG/+Fs9NJIPfpAGpXYYLWaJ3UAZFyvfBuG6PQ0Z3Xyl",
+            "tags": ""
+        },
+        {
+            "hashing_algorithm": "rabbit_password_hashing_sha256",
+            "limits": {},
+            "name": "service1user",
+            "password_hash": "rMSRQbwa2GProSTRPwcmK3ntY+85jfQFZOMKVeTTU/gu/JTB",
+            "tags": ""
+        },
+        {
+            "hashing_algorithm": "rabbit_password_hashing_sha256",
+            "limits": {},
+            "name": "defaultrabbituser",
+            "password_hash": "Y944lVaWd+QHAfIV639kOH4VV6343vMLll3120hEUvFyxRqW",
+            "tags": "administrator"
+        }
+    ],
+    "vhosts": [
+        {
+            "limits": [],
+            "metadata": {
+                "description": "Default virtual host",
+                "tags": []
+            },
+            "name": "/"
+        },
+        {
+            "limits": [],
+            "metadata": {
+                "description": "",
+                "tags": []
+            },
+            "name": "service2vhost"
+        },
+        {
+            "limits": [],
+            "metadata": {
+                "description": "",
+                "tags": []
+            },
+            "name": "service1vhost"
+        }
+    ]
+}

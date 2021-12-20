@@ -1,0 +1,5 @@
+# useful for testing proxy configurations, it just echos back what it receives
+echo-test:
+    image: mendhak/http-https-echo:18
+    ports:
+      - "9005:8080"
