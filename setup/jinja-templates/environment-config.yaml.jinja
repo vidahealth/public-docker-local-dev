@@ -1,0 +1,20 @@
+# Modify these lists and re-run environment-update.sh
+# When running with docker-compose (either from docker-local-dev project, or when using
+# pycharm docker-compose debug mode)
+in_docker:
+  - rabbitmq
+  - redis
+  - datadog
+  - snowplow
+  - webserver
+  - webserver-celery
+  - webserver-celery-beat
+  - microservice
+  - split-synchronizer
+
+outside_of_docker: []
+
+not_deployed: []
+
+# this value is setup in first-time-setup.sh, and shouldn't need to be modified
+ngrok_subdomain: {{ SAFE_USERNAME }}-dockertest
