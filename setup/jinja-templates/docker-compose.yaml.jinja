@@ -6,7 +6,7 @@ version: "3.9"
 services:
 {% if "webserver" in in_docker %}
   webserver:
-    image: rmelickvida/public-example-django:d2629ba
+    image: rmelickvida/public-example-django:e2cbe80
     ports:
       - "${WEBSERVER_EXTERNAL_PORT}:${WEBSERVER_INTERNAL_PORT}"
     # gunicorn still seems to log users out frequently, so run manage.py
@@ -19,7 +19,7 @@ services:
         condition: service_started
     environment:
       - DD_AGENT_HOST=datadog
-      - DD_ENV=docker-local-dev
+      - DD_ENV=public-docker-local-dev
       - DD_LOGS_INJECTION=true
       - DD_SERVICE=web-service
       - DB_USER=postgres
@@ -37,8 +37,6 @@ services:
       - SNOWPLOW_ENABLED
       - DD_TRACE_ENABLED
       - REDIS_PASSWORD
-      - REACT_APP_DELPHI_SERVE_LOCATION
-      - REACT_APP_HERMES_SERVE_LOCATION
       - DD_API_KEY
       - SPLIT_API_KEY
       - SPLIT_REDIS_HOST
@@ -48,7 +46,7 @@ services:
 
 {% if "webserver-celery" in in_docker %}
   webserver-celery:
-    image: rmelickvida/public-example-django:d2629ba
+    image: rmelickvida/public-example-django:e2cbe80
     command: "celery -A tutorial worker --loglevel=DEBUG -Q celery --without-mingle --without-gossip --max-tasks-per-child=500 --concurrency 1"
     depends_on:
       rabbitmq:
@@ -57,7 +55,7 @@ services:
         condition: service_started
     environment:
       - DD_AGENT_HOST=datadog
-      - DD_ENV=docker-local-dev
+      - DD_ENV=public-docker-local-dev
       - DD_LOGS_INJECTION=true
       - DD_SERVICE=web-service-celery-worker
       - DB_USER=postgres
@@ -84,7 +82,7 @@ services:
 
 {% if "webserver-celery-beat" in in_docker %}
   webserver-celery-beat:
-    image: rmelickvida/public-example-django:d2629ba
+    image: rmelickvida/public-example-django:e2cbe80
     command: "celery beat --loglevel=DEBUG -A tutorial"
     depends_on:
       webserver-celery:
@@ -95,7 +93,7 @@ services:
         condition: service_started
     environment:
       - DD_AGENT_HOST=datadog
-      - DD_ENV=docker-local-dev
+      - DD_ENV=public-docker-local-dev
       - DD_LOGS_INJECTION=true
       - DD_SERVICE=web-service-celery-beat
       - DB_USER=postgres
@@ -122,12 +120,10 @@ services:
 
 {% if "microservice" in in_docker %}
   microservice:
-    image: rmelickvida/public-example-microservice:d2629ba
+    image: rmelickvida/public-example-microservice:6989001
     ports:
-      - "${WEBSERVER_EXTERNAL_PORT}:${WEBSERVER_INTERNAL_PORT}"
-    # gunicorn still seems to log users out frequently, so run manage.py
-    #command: "gunicorn vida.wsgi -c gunicorn_config.py --log-file - --access-logfile - --timeout 300 --graceful-timeout 90 --keep-alive 700 --preload --workers=2 --worker-class=gevent --bind 0.0.0.0:${WEBSERVER_INTERNAL_PORT} --log-level debug --forwarded-allow-ips * --proxy-allow-from *"
-    command: ["/bin/sh", "-c", "./manage.py migrate && ddtrace-run manage.py runserver --noreload 0.0.0.0:${WEBSERVER_INTERNAL_PORT}"]
+      - "${MICROSERVICE_EXTERNAL_PORT}:${MICROSERVICE_INTERNAL_PORT}"
+    command: ["/bin/sh", "-c", "./manage.py migrate && ddtrace-run manage.py runserver --noreload 0.0.0.0:${MICROSERVICE_INTERNAL_PORT}"]
     depends_on:
       rabbitmq:
         condition: service_started
@@ -135,26 +131,24 @@ services:
         condition: service_started
     environment:
       - DD_AGENT_HOST=datadog
-      - DD_ENV=docker-local-dev
+      - DD_ENV=public-docker-local-dev
       - DD_LOGS_INJECTION=true
-      - DD_SERVICE=web-service
-      - DB_USER=postgres
+      - DD_SERVICE=microservice
+      - DB_USER=root
       - DB_PASSWORD=password
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_NAME=db
-      - "CELERY_BROKER_URL=pyamqp://${SERVICE1_RABBIT_MQ_USER}:${SERVICE1_RABBIT_MQ_PASSWORD}@rabbitmq/${SERVICE1_RABBIT_MQ_VHOST}"
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=microservicedb
+      - "CELERY_BROKER_URL=pyamqp://${SERVICE2_RABBIT_MQ_USER}:${SERVICE2_RABBIT_MQ_PASSWORD}@rabbitmq/${SERVICE2_RABBIT_MQ_VHOST}"
       - DJANGO_SETTINGS_MODULE=tutorial.settings
       - SNOWPLOW_HOST=snowplow
       - SNOWPLOW_PORT=9090
       - "REDIS_CACHE_LOCATION=redis:6379"
-      - CELERY_TASK_ALWAYS_EAGER=${WEBSERVER_CELERY_TASK_ALWAYS_EAGER}
+      - CELERY_TASK_ALWAYS_EAGER=${MICROSERVICE_CELERY_TASK_ALWAYS_EAGER}
       # the following are pulled from the docker .env file
       - SNOWPLOW_ENABLED
       - DD_TRACE_ENABLED
       - REDIS_PASSWORD
-      - REACT_APP_DELPHI_SERVE_LOCATION
-      - REACT_APP_HERMES_SERVE_LOCATION
       - DD_API_KEY
       - SPLIT_API_KEY
       - SPLIT_REDIS_HOST
@@ -304,7 +298,7 @@ services:
       - DD_APM_ENABLED=true
       - DD_APM_NON_LOCAL_TRAFFIC=true
       - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
-      - DD_ENV=docker-local-dev
+      - DD_ENV=public-docker-local-dev
       # taken from the .env file
       - DD_API_KEY
       # uncomment the DD_PROCESS_AGENT if you need to enable cpu profiling
