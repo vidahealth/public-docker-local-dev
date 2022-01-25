@@ -1,5 +1,5 @@
 # public-docker-local-dev
-A public, simplified version of docker-local-dev to accompany the blog post.
+A public, simplified version of docker-local-dev to accompany the [blog post](https://engineering.vida.com/blog/docker-local-dev).
 
 Related repositories:
 * [public-docker-local-dev](https://github.com/vidahealth/public-docker-local-dev) (this repository) is the main repository for the local dev environment
